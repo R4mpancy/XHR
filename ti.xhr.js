@@ -8,12 +8,12 @@ XHR = function() {};
 // ================
 
 // GET
-// @e (object) url is required field. supports onSucces, onError and extraParams. 
+// @e (object) url is required field. supports onSucces, onError and extraParams.
 XHR.prototype.GET = function(e) {
     // Create some default params
     var onSuccess = e.onSuccess || function() {};
     var onError = e.onError || function() {};
-    
+
     if (e.extraParams) {
         var extraParams = addDefaultsToOptions(e.extraParams);
     } else {
@@ -299,6 +299,17 @@ function handleSuccess(xhr, extraParams) {
         result.data = xhr.responseData;
     }
 
+    if (extraParams.headersToReturn) {
+        result.responseHeaders = [];
+        for (var headerName in headersToReturn) {
+            result.responseHeaders.push(
+                {
+                    headerName: xhr.getResponseHeader(headerName)
+                }
+            );
+        }
+    }
+
     return result;
 }
 
@@ -308,7 +319,7 @@ function handleError(xhr, error) {
     result.result = "error";
     result.status = xhr.status;
     result.error = error.error;
-    
+
     // Parse error result body
     try {
         if (extraParams.returnXML && xhr.responseXML) {
@@ -426,4 +437,4 @@ function writeCache(data, url, ttl) {
 };
 
 // Return everything
-module.exports = XHR; 
+module.exports = XHR;
